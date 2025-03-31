@@ -1,1 +1,1413 @@
 
+<!doctype html>
+<html lang="en"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Our Story - Relationship Dashboard</title> 
+  <script src="https://cdn.tailwindcss.com"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script> 
+  <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #ff6b6b;
+            --secondary: #4ecdc4;
+            --accent: #ffbe0b;
+            --light: #f7f7f7;
+            --dark: #2b2d42;
+        }
+        
+        * {
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .script-font {
+            font-family: 'Dancing Script', cursive;
+        }
+        
+        body {
+            background-color: #fef6f6;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(120deg, #ffdde1, #ee9ca7, #ffdde1);
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
+        }
+        
+        .memory-overlay {
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .btn {
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+    </style> 
+ </head> 
+ <body class="min-h-screen"> 
+  <div id="particles-js"></div> <!-- Navigation --> 
+  <nav class="bg-white shadow-md fixed w-full z-10 py-4 px-6"> 
+   <div class="container mx-auto flex justify-between items-center"> 
+    <div class="flex items-center"> 
+     <h1 class="text-2xl md:text-3xl font-bold text-pink-500 script-font">Our<span class="text-teal-500">Story</span></h1> 
+    </div> 
+    <div class="hidden md:flex space-x-6"> <a href="#dashboard" class="text-gray-700 hover:text-pink-500 font-medium">Dashboard</a> <a href="#memories" class="text-gray-700 hover:text-pink-500 font-medium">Memories</a> <a href="#map" class="text-gray-700 hover:text-pink-500 font-medium">Love Map</a> <a href="#notes" class="text-gray-700 hover:text-pink-500 font-medium">Notes</a> 
+    </div> 
+    <div class="flex items-center space-x-4"> <button id="voice-btn" class="p-2 rounded-full bg-pink-100 text-pink-500 hover:bg-pink-200"> 
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewbox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /> 
+      </svg> </button> <button id="theme-toggle" class="p-2 rounded-full bg-teal-100 text-teal-500 hover:bg-teal-200"> 
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewbox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /> 
+      </svg> </button> 
+    </div> 
+   </div> 
+  </nav> <!-- Main Content --> 
+  <main class="container mx-auto pt-24 pb-12 px-4"> <!-- Hero Section with Background Image --> 
+   <section class="relative h-96 rounded-3xl overflow-hidden mb-12"> 
+    <div class="absolute inset-0 bg-pink-200 opacity-60"></div> 
+    <div class="absolute inset-0 flex flex-col justify-center items-center text-center p-6"> 
+     <h2 id="greeting" class="text-4xl md:text-6xl font-bold text-pink-700 mb-4 script-font">Loading...</h2> 
+     <p id="date-time" class="text-xl text-teal-700 font-medium"></p> 
+     <div class="mt-8 bg-white bg-opacity-70 px-8 py-4 rounded-full"> 
+      <p class="text-gray-800 italic">"Every love story is beautiful, but ours is my favorite."</p> 
+     </div> 
+    </div> 
+   </section> <!-- Dashboard Section --> 
+   <section id="dashboard" class="my-16"> 
+    <h2 class="text-3xl font-bold text-pink-600 mb-8 script-font text-center">Our Journey Together</h2> 
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"> <!-- Days Together Card --> 
+     <div class="card bg-white p-6 floating"> 
+      <div class="flex flex-col items-center"> 
+       <div class="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center mb-4"> 
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-pink-500" fill="none" viewbox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /> 
+        </svg> 
+       </div> 
+       <h3 class="text-xl font-semibold mb-2 text-center">Days Together</h3> 
+       <div class="counter-value text-5xl font-bold text-pink-600" id="days-count">
+        0
+       </div> 
+       <p class="text-gray-500 mt-2 text-center">days of loving each other</p> 
+      </div> 
+     </div> <!-- Next Anniversary Card --> 
+     <div class="card bg-white p-6 floating"> 
+      <div class="flex flex-col items-center"> 
+       <div class="w-16 h-16 rounded-full bg-teal-100 flex items-center justify-center mb-4"> 
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-teal-500" fill="none" viewbox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /> 
+        </svg> 
+       </div> 
+       <h3 class="text-xl font-semibold mb-2 text-center">Next Anniversary</h3> 
+       <div id="next-anniversary" class="text-3xl font-bold text-teal-600">
+        Loading...
+       </div> 
+       <p class="text-gray-500 mt-2 text-center">until we celebrate again</p> 
+      </div> 
+     </div> <!-- Special Moments Card --> 
+     <div class="card bg-white p-6 floating"> 
+      <div class="flex flex-col items-center"> 
+       <div class="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center mb-4"> 
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-pink-500" fill="none" viewbox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /> 
+        </svg> 
+       </div> 
+       <h3 class="text-xl font-semibold mb-2 text-center">Special Moments</h3> 
+       <div class="counter-value text-5xl font-bold text-pink-600" id="moments-count">
+        0
+       </div> 
+       <p class="text-gray-500 mt-2 text-center">memories we've created</p> 
+      </div> 
+     </div> <!-- Upcoming Event Card --> 
+     <div class="card bg-white p-6 floating"> 
+      <div class="flex flex-col items-center"> 
+       <div class="w-16 h-16 rounded-full bg-teal-100 flex items-center justify-center mb-4"> 
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-teal-500" fill="none" viewbox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /> 
+        </svg> 
+       </div> 
+       <h3 class="text-xl font-semibold mb-2 text-center">Upcoming Event</h3> 
+       <div id="next-event-name" class="text-2xl font-bold text-teal-600 text-center">
+        Your next adventure
+       </div> 
+       <div id="next-event-date" class="text-gray-500 mt-2 text-center">
+        Coming soon
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+   </section> <!-- Memories Section --> 
+   <section id="memories" class="my-16"> 
+    <h2 class="text-3xl font-bold text-pink-600 mb-8 script-font text-center">Our Precious Memories</h2> 
+    <div class="card bg-white p-8"> 
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6"> <!-- Memory cards will be dynamically added here --> 
+      <div class="memory-card card relative h-64 overflow-hidden group"> 
+       <div class="bg-pink-100 absolute inset-0"></div> 
+       <div class="absolute inset-0 flex items-center justify-center"> <span class="text-6xl">📷</span> 
+       </div> 
+       <div class="absolute bottom-0 left-0 right-0 p-4 memory-overlay opacity-0 group-hover:opacity-100 transition-opacity"> 
+        <h3 class="text-xl font-semibold text-white">First Date</h3> 
+        <p class="text-sm text-gray-200">Add a memorable moment</p> 
+       </div> 
+      </div> 
+      <div class="memory-card card relative h-64 overflow-hidden group"> 
+       <div class="bg-teal-100 absolute inset-0"></div> 
+       <div class="absolute inset-0 flex items-center justify-center"> <span class="text-6xl">🎉</span> 
+       </div> 
+       <div class="absolute bottom-0 left-0 right-0 p-4 memory-overlay opacity-0 group-hover:opacity-100 transition-opacity"> 
+        <h3 class="text-xl font-semibold text-white">Anniversary</h3> 
+        <p class="text-sm text-gray-200">Add a memorable moment</p> 
+       </div> 
+      </div> 
+      <div class="memory-card card relative h-64 overflow-hidden group"> 
+       <div class="bg-pink-100 absolute inset-0"></div> 
+       <div class="absolute inset-0 flex items-center justify-center"> <span class="text-6xl">✈️</span> 
+       </div> 
+       <div class="absolute bottom-0 left-0 right-0 p-4 memory-overlay opacity-0 group-hover:opacity-100 transition-opacity"> 
+        <h3 class="text-xl font-semibold text-white">First Trip</h3> 
+        <p class="text-sm text-gray-200">Add a memorable moment</p> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="text-center mt-8"> <button id="add-memory" class="btn bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 rounded-full text-lg shadow-lg"> Add New Memory </button> 
+     </div> 
+    </div> 
+    <!-- Add this section after the existing Memories Section -->
+<section id="gallery" class="my-16">
+    <h2 class="text-3xl font-bold text-pink-600 mb-8 script-font text-center">Our Photo Gallery</h2>
+    <div class="card bg-white p-8">
+        <!-- Image upload area -->
+        <div class="mb-8 p-6 border-2 border-dashed border-pink-300 rounded-lg text-center">
+            <div class="mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-teal-600">Upload Your Special Moments</h3>
+            <p class="text-gray-600 mb-4">Drag and drop photos or click to select</p>
+            <input type="file" id="image-upload" class="hidden" accept="image/*" multiple>
+            <button id="upload-btn" class="btn bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-full shadow-lg">
+                Choose Photos
+            </button>
+        </div>
+        
+        <!-- Gallery filter and controls -->
+        <div class="flex flex-wrap justify-between items-center mb-6">
+            <div class="flex space-x-2 mb-4 md:mb-0">
+                <button class="px-4 py-2 rounded-full bg-pink-500 text-white font-medium">All Photos</button>
+                <button class="px-4 py-2 rounded-full bg-gray-200 text-gray-700 font-medium hover:bg-pink-100">Dates</button>
+                <button class="px-4 py-2 rounded-full bg-gray-200 text-gray-700 font-medium hover:bg-pink-100">Trips</button>
+                <button class="px-4 py-2 rounded-full bg-gray-200 text-gray-700 font-medium hover:bg-pink-100">Events</button>
+            </div>
+            <div class="flex items-center">
+                <label class="text-gray-600 mr-2">Sort by:</label>
+                <select class="bg-white border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-pink-400">
+                    <option>Newest First</option>
+                    <option>Oldest First</option>
+                    <option>A-Z</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Image gallery grid -->
+        <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <!-- Images will be dynamically added here -->
+            <div class="gallery-item relative group overflow-hidden rounded-lg aspect-square bg-gray-100">
+                <div class="absolute inset-0 flex items-center justify-center text-gray-400">
+                    <span class="text-2xl">📷</span>
+                </div>
+                <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
+                    <div class="p-3 text-white w-full">
+                        <h4 class="font-medium truncate">Your Photos</h4>
+                        <p class="text-xs text-gray-300">Upload to see them here</p>
+                        <div class="flex justify-end mt-2">
+                            <button class="p-1 text-white hover:text-pink-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                            </button>
+                            <button class="p-1 text-white hover:text-pink-300 ml-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Load more button -->
+        <div class="text-center mt-8">
+            <button id="load-more-photos" class="btn bg-teal-500 hover:bg-teal-600 text-white px-8 py-3 rounded-full text-lg shadow-lg">
+                Load More Photos
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Image Viewer Modal -->
+<div id="image-viewer-modal" class="fixed inset-0 bg-black bg-opacity-90 hidden items-center justify-center z-50">
+    <div class="relative w-full max-w-6xl p-4">
+        <button id="close-viewer" class="absolute top-0 right-0 m-4 text-white hover:text-pink-300 z-10">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+        
+        <div class="flex items-center justify-center">
+            <button id="prev-image" class="p-2 text-white hover:text-pink-300 mr-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            
+            <div class="image-container relative bg-gray-800 rounded-lg overflow-hidden">
+                <img id="current-image" src="" alt="Image Preview" class="max-h-[80vh] max-w-full object-contain">
+                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent text-white">
+                    <h3 id="image-title" class="text-xl font-semibold">Image Title</h3>
+                    <p id="image-description" class="text-sm mt-1">Image description or details</p>
+                    <p id="image-date" class="text-xs text-gray-300 mt-1">Date taken</p>
+                </div>
+            </div>
+            
+            <button id="next-image" class="p-2 text-white hover:text-pink-300 ml-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Image Upload Modal -->
+<div id="upload-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="card bg-white p-8 max-w-md w-full">
+        <h3 class="text-2xl font-bold text-pink-600 mb-6 text-center">Add Photo Details</h3>
+        <div class="mb-4 text-center">
+            <div id="image-preview" class="w-full h-48 bg-gray-100 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                <span id="preview-placeholder" class="text-gray-400 text-4xl">📷</span>
+                <img id="preview-image" src="" alt="Preview" class="hidden max-h-full max-w-full object-contain">
+            </div>
+        </div>
+        <div class="space-y-4">
+            <div>
+                <label class="block mb-2 text-gray-700">Title</label>
+                <input type="text" id="image-title-input" class="w-full bg-pink-50 border border-pink-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400">
+            </div>
+            <div>
+                <label class="block mb-2 text-gray-700">Description</label>
+                <textarea id="image-description-input" rows="2" class="w-full bg-pink-50 border border-pink-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"></textarea>
+            </div>
+            <div>
+                <label class="block mb-2 text-gray-700">Date</label>
+                <input type="date" id="image-date-input" class="w-full bg-pink-50 border border-pink-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400">
+            </div>
+            <div>
+                <label class="block mb-2 text-gray-700">Category</label>
+                <select id="image-category" class="w-full bg-pink-50 border border-pink-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400">
+                    <option value="dates">Dates</option>
+                    <option value="trips">Trips</option>
+                    <option value="events">Events</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="flex justify-end space-x-4 mt-6">
+                <button id="cancel-upload" class="px-6 py-2 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100">Cancel</button>
+                <button id="save-image" class="btn bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-full shadow">Save Image</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+   </section> <!-- Love Map Section --> 
+   <section id="map" class="my-16"> 
+    <h2 class="text-3xl font-bold text-pink-600 mb-8 script-font text-center">Our Love Map</h2> 
+    <div class="card bg-white p-8"> 
+     <div id="love-map" class="w-full h-96 rounded-lg overflow-hidden relative bg-teal-50"> <!-- Map will be loaded here --> 
+      <div class="absolute inset-0 flex items-center justify-center flex-col text-center"> 
+       <div class="text-6xl mb-4">
+        🗺️
+       </div> 
+       <p class="text-xl text-teal-600 font-semibold">Your adventures together</p> 
+       <p class="text-sm text-gray-500 mt-2">Add locations you've visited</p> 
+      </div> 
+     </div> 
+     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6"> 
+      <div class="card bg-pink-50 p-4 flex items-center"> 
+       <div class="w-3 h-3 rounded-full bg-pink-500 mr-3"></div> <span>Paris, France</span> 
+      </div> 
+      <div class="card bg-teal-50 p-4 flex items-center"> 
+       <div class="w-3 h-3 rounded-full bg-teal-500 mr-3"></div> <span>Tokyo, Japan</span> 
+      </div> 
+      <div class="card bg-pink-50 p-4 flex items-center"> 
+       <div class="w-3 h-3 rounded-full bg-pink-500 mr-3"></div> <span>New York, USA</span> 
+      </div> 
+     </div> 
+    </div> 
+   </section> <!-- Notes Section --> 
+   <section id="notes" class="my-16"> 
+    <h2 class="text-3xl font-bold text-pink-600 mb-8 script-font text-center">Love Notes</h2> 
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> 
+     <div class="card bg-white p-6"> 
+      <h3 class="text-xl font-semibold mb-6 text-center text-teal-600">Write a Love Note</h3> 
+      <div class="space-y-4"> 
+       <input type="text" id="note-title" placeholder="Title" class="w-full bg-pink-50 border border-pink-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"> <textarea id="note-content" rows="5" placeholder="Write your thoughts..." class="w-full bg-pink-50 border border-pink-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"></textarea> 
+       <div class="flex justify-end"> <button id="save-note" class="btn bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-full shadow">Save Note</button> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="card bg-white p-6"> 
+      <h3 class="text-xl font-semibold mb-6 text-center text-pink-600">Saved Notes</h3> 
+      <div id="notes-container" class="space-y-4 max-h-64 overflow-y-auto pr-2"> <!-- Notes will be dynamically added here --> 
+       <div class="card bg-pink-50 p-4 border-l-4 border-pink-500"> 
+        <h4 class="text-lg font-semibold text-pink-600">Our Dream Vacation</h4> 
+        <p class="text-sm mt-2 text-gray-700">Let's plan that trip to Bali next summer!</p> 
+        <div class="text-right text-xs mt-2 text-gray-500">
+         March 15, 2025
+        </div> 
+       </div> 
+       <div class="card bg-teal-50 p-4 border-l-4 border-teal-500"> 
+        <h4 class="text-lg font-semibold text-teal-600">Movie Night Ideas</h4> 
+        <p class="text-sm mt-2 text-gray-700">1. Sci-fi marathon 2. Classic romcoms 3. Foreign films</p> 
+        <div class="text-right text-xs mt-2 text-gray-500">
+         March 10, 2025
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+   </section> 
+  </main> <!-- Footer --> 
+  <footer class="bg-white shadow-inner text-center p-6 mt-12"> 
+   <p class="text-gray-600">Created with <span class="text-pink-500">♥</span> | <span id="current-year"></span></p> 
+  </footer> <!-- Add Memory Modal --> 
+  <div id="memory-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"> 
+   <div class="card bg-white p-8 max-w-md w-full"> 
+    <h3 class="text-2xl font-bold text-pink-600 mb-6 text-center">Add New Memory</h3> 
+    <div class="space-y-4"> 
+     <div> <label class="block mb-2 text-gray-700">Title</label> 
+      <input type="text" id="memory-title" class="w-full bg-pink-50 border border-pink-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"> 
+     </div> 
+     <div> <label class="block mb-2 text-gray-700">Date</label> 
+      <input type="date" id="memory-date" class="w-full bg-pink-50 border border-pink-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"> 
+     </div> 
+     <div> <label class="block mb-2 text-gray-700">Description</label> <textarea id="memory-description" rows="3" class="w-full bg-pink-50 border border-pink-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"></textarea> 
+     </div> 
+     <div> <label class="block mb-2 text-gray-700">Memory Icon (emoji)</label> 
+      <input type="text" id="memory-icon" class="w-full bg-pink-50 border border-pink-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400" placeholder="📷 🎉 ✈️ 🎁"> 
+     </div> 
+     <div class="flex justify-end space-x-4 mt-6"> <button id="cancel-memory" class="px-6 py-2 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100">Cancel</button> <button id="save-memory" class="btn bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-full shadow">Save Memory</button> 
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+  <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Custom cursor
+            const cursor = document.querySelector('.custom-cursor');
+            const cursorTrail = document.createElement('div');
+            cursorTrail.classList.add('cursor-trail');
+            document.body.appendChild(cursorTrail);
+            
+            document.addEventListener('mousemove', function(e) {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                
+                setTimeout(() => {
+                    cursorTrail.style.left = e.clientX + 'px';
+                    cursorTrail.style.top = e.clientY + 'px';
+                }, 100);
+            });
+            
+            document.addEventListener('mousedown', function() {
+                cursor.style.transform = 'translate(-50%, -50%) scale(0.8)';
+            });
+            
+            document.addEventListener('mouseup', function() {
+                cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+            });
+            
+            // Initialize particles
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 50,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#ff6b6b"
+                    },
+                    "shape": {
+                        "type": "circle"
+                    },
+                    "opacity": {
+                        "value": 0.2,
+                        "random": true
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#ff6b6b",
+                        "opacity": 0.1,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 1,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 0.4
+                            }
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+            
+            // Theme toggle
+            const themeToggle = document.getElementById('theme-toggle');
+            let currentTheme = 'light';
+            
+            themeToggle.addEventListener('click', function() {
+                if (currentTheme === 'light') {
+                    document.body.style.backgroundColor = '#2d3748';
+                    document.body.style.color = '#f7fafc';
+                    
+                    themeToggle.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    `;
+                    
+                    currentTheme = 'dark';
+                } else {
+                    document.body.style.backgroundColor = '';
+                    document.body.style.color = '';
+                    
+                    themeToggle.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                    `;
+                    
+                    currentTheme = 'light';
+                }
+            });
+            
+            // Voice recognition
+            const voiceBtn = document.getElementById('voice-btn');
+            let recognition;
+            
+            if ('webkitSpeechRecognition' in window) {
+                recognition = new webkitSpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                
+                recognition.onstart = function() {
+                    voiceBtn.classList.add('listening');
+                };
+                
+                recognition.onend = function() {
+                    voiceBtn.classList.remove('listening');
+                };
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript.toLowerCase();
+                    
+                    if (transcript.includes('dashboard')) {
+                        document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' });
+                    } else if (transcript.includes('memories')) {
+                        document.getElementById('memories').scrollIntoView({ behavior: 'smooth' });
+                    } else if (transcript.includes('map')) {
+                        document.getElementById('map').scrollIntoView({ behavior: 'smooth' });
+                    } else if (transcript.includes('notes')) {
+                        document.getElementById('notes').scrollIntoView({ behavior: 'smooth' });
+                    } else if (transcript.includes('dark') || transcript.includes('light')) {
+                        themeToggle.click();
+                    } else if (transcript.includes('add memory')) {
+                        document.getElementById('add-memory').click();
+                    }
+                };
+                
+                voiceBtn.addEventListener('click', function() {
+                    recognition.start();
+                });
+            } else {
+                voiceBtn.style.display = 'none';
+            }
+            
+            // Personalized greeting
+            const names = {
+                user1: "Your Name",
+                user2: "Your Girlfriend's Name"
+            };
+            
+            const greeting = document.getElementById('greeting');
+            const currentHour = new Date().getHours();
+            let greetingText;
+            
+            if (currentHour < 12) {
+                greetingText = "Good Morning";
+            } else if (currentHour < 18) {
+                greetingText = "Good Afternoon";
+            } else {
+                greetingText = "Good Evening";
+            }
+            
+             greeting.innerHTML = `${greetingText}, <span class="text-teal-600">${names.user1}</span> & <span class="text-pink-600">${names.user2}</span>`;
+
+// Date and time
+const dateTimeElement = document.getElementById('date-time');
+const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+dateTimeElement.textContent = new Date().toLocaleDateString('en-US', options);
+
+// Days counter
+const startDate = new Date('2024-01-01'); // Set your relationship start date here
+const daysCount = document.getElementById('days-count');
+const today = new Date();
+const diffTime = Math.abs(today - startDate);
+const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+daysCount.textContent = diffDays;
+
+// Next anniversary
+const nextAnniversary = document.getElementById('next-anniversary');
+const nextAnnDate = new Date(today.getFullYear(), startDate.getMonth(), startDate.getDate());
+if (nextAnnDate < today) {
+    nextAnnDate.setFullYear(today.getFullYear() + 1);
+}
+const daysToAnn = Math.ceil(Math.abs(nextAnnDate - today) / (1000 * 60 * 60 * 24));
+nextAnniversary.textContent = `${daysToAnn} days`;
+
+// Special moments counter
+const momentsCount = document.getElementById('moments-count');
+momentsCount.textContent = '12'; // Update with actual count
+
+// Current year for footer
+document.getElementById('current-year').textContent = new Date().getFullYear();
+
+// Memory modal functionality
+const addMemoryBtn = document.getElementById('add-memory');
+const memoryModal = document.getElementById('memory-modal');
+const cancelMemoryBtn = document.getElementById('cancel-memory');
+const saveMemoryBtn = document.getElementById('save-memory');
+
+addMemoryBtn.addEventListener('click', function() {
+    memoryModal.classList.remove('hidden');
+    memoryModal.classList.add('flex');
+});
+
+cancelMemoryBtn.addEventListener('click', function() {
+    memoryModal.classList.remove('flex');
+    memoryModal.classList.add('hidden');
+});
+
+saveMemoryBtn.addEventListener('click', function() {
+    const title = document.getElementById('memory-title').value;
+    const date = document.getElementById('memory-date').value;
+    const description = document.getElementById('memory-description').value;
+    const icon = document.getElementById('memory-icon').value || '📷';
+    
+    if (title && date) {
+        // Add the memory to the grid
+        const memoriesGrid = document.querySelector('#memories .grid');
+        const memoryCard = document.createElement('div');
+        memoryCard.className = 'memory-card card relative h-64 overflow-hidden group';
+        memoryCard.innerHTML = `
+            <div class="bg-pink-100 absolute inset-0"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-6xl">${icon}</span>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 p-4 memory-overlay opacity-0 group-hover:opacity-100 transition-opacity">
+                <h3 class="text-xl font-semibold text-white">${title}</h3>
+                <p class="text-sm text-gray-200">${description}</p>
+                <div class="text-xs text-gray-300 mt-1">${new Date(date).toLocaleDateString()}</div>
+            </div>
+        `;
+        memoriesGrid.prepend(memoryCard);
+        
+        // Update the counter
+        const currentCount = parseInt(momentsCount.textContent);
+        momentsCount.textContent = currentCount + 1;
+        
+        // Reset form and close modal
+        document.getElementById('memory-title').value = '';
+        document.getElementById('memory-date').value = '';
+        document.getElementById('memory-description').value = '';
+        document.getElementById('memory-icon').value = '';
+        
+        memoryModal.classList.remove('flex');
+        memoryModal.classList.add('hidden');
+    }
+});
+
+// Add note functionality
+const saveNoteBtn = document.getElementById('save-note');
+saveNoteBtn.addEventListener('click', function() {
+    const title = document.getElementById('note-title').value;
+    const content = document.getElementById('note-content').value;
+    
+    if (title && content) {
+        const notesContainer = document.getElementById('notes-container');
+        const noteCard = document.createElement('div');
+        const isEven = notesContainer.children.length % 2 === 0;
+        const bgColor = isEven ? 'bg-pink-50' : 'bg-teal-50';
+        const borderColor = isEven ? 'border-pink-500' : 'border-teal-500';
+        const titleColor = isEven ? 'text-pink-600' : 'text-teal-600';
+        
+        noteCard.className = `card ${bgColor} p-4 border-l-4 ${borderColor}`;
+        noteCard.innerHTML = `
+            <h4 class="text-lg font-semibold ${titleColor}">${title}</h4>
+            <p class="text-sm mt-2 text-gray-700">${content}</p>
+            <div class="text-right text-xs mt-2 text-gray-500">${new Date().toLocaleDateString()}</div>
+        `;
+        
+        notesContainer.prepend(noteCard);
+        
+        // Reset form
+        document.getElementById('note-title').value = '';
+        document.getElementById('note-content').value = '';
+    }
+});
+
+// Animation for counters
+const counters = document.querySelectorAll('.counter-value');
+counters.forEach(counter => {
+    const target = parseInt(counter.textContent);
+    let count = 0;
+    const duration = 2000; // ms
+    const increment = target / (duration / 30);
+    
+    const updateCount = () => {
+        if (count < target) {
+            count += increment;
+            counter.textContent = Math.min(Math.floor(count), target);
+            setTimeout(updateCount, 30);
+        } else {
+            counter.textContent = target;
+        }
+    };
+    
+    updateCount();
+});
+
+// Smooth scrolling for navigation links
+document.querySelectorAll('nav a').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        window.scrollTo({
+            top: target.offsetTop - 100,
+            behavior: 'smooth'
+        });
+    });
+});
+
+// Mock next event data
+document.getElementById('next-event-name').textContent = "Movie Night";
+document.getElementById('next-event-date').textContent = "April 5, 2025";
+
+// 3D effect for cards
+document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mousemove', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const xc = rect.width / 2;
+        const yc = rect.height / 2;
+        
+        const dx = x - xc;
+        const dy = y - yc;
+        
+        this.style.transform = `perspective(1000px) rotateY(${dx / 20}deg) rotateX(${-dy / 20}deg) translateZ(10px)`;
+    });
+    
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'perspective(1000px) rotateY(0) rotateX(0) translateZ(0)';
+    });
+});
+
+});
+<!-- Add this script before the closing body tag -->
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add this inside your existing DOMContentLoaded function
+        
+        // Image upload functionality
+        const uploadBtn = document.getElementById('upload-btn');
+        const imageUpload = document.getElementById('image-upload');
+        const uploadModal = document.getElementById('upload-modal');
+        const cancelUpload = document.getElementById('cancel-upload');
+        const saveImage = document.getElementById('save-image');
+        const previewImage = document.getElementById('preview-image');
+        const previewPlaceholder = document.getElementById('preview-placeholder');
+        
+        // Gallery and image viewer elements
+        const galleryGrid = document.getElementById('gallery-grid');
+        const imageViewerModal = document.getElementById('image-viewer-modal');
+        const closeViewer = document.getElementById('close-viewer');
+        const currentImage = document.getElementById('current-image');
+        const imageTitle = document.getElementById('image-title');
+        const imageDescription = document.getElementById('image-description');
+        const imageDate = document.getElementById('image-date');
+        const prevImage = document.getElementById('prev-image');
+        const nextImage = document.getElementById('next-image');
+        
+        // Store uploaded images
+        let uploadedImages = [];
+        let currentImageIndex = 0;
+        
+        // Trigger file input when upload button is clicked
+        uploadBtn.addEventListener('click', function() {
+            imageUpload.click();
+        });
+        
+        // When files are selected
+        imageUpload.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                
+                // Display preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewImage.classList.remove('hidden');
+                    previewPlaceholder.classList.add('hidden');
+                    
+                    // Set default date to today
+                    document.getElementById('image-date-input').value = new Date().toISOString().split('T')[0];
+                    
+                    // Show upload details modal
+                    uploadModal.classList.remove('hidden');
+                    uploadModal.classList.add('flex');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Cancel upload
+        cancelUpload.addEventListener('click', function() {
+            uploadModal.classList.remove('flex');
+            uploadModal.classList.add('hidden');
+            imageUpload.value = '';
+        });
+        
+        // Save image with details
+        saveImage.addEventListener('click', function() {
+            const title = document.getElementById('image-title-input').value || 'Untitled';
+            const description = document.getElementById('image-description-input').value || '';
+            const date = document.getElementById('image-date-input').value || new Date().toISOString().split('T')[0];
+            const category = document.getElementById('image-category').value;
+            
+            // Create image object
+            const imageObj = {
+                src: previewImage.src,
+                title: title,
+                description: description,
+                date: date,
+                category: category
+            };
+            
+            // Add to our images array
+            uploadedImages.push(imageObj);
+            
+            // Add to gallery
+            addImageToGallery(imageObj, uploadedImages.length - 1);
+            
+            // Close modal and reset
+            uploadModal.classList.remove('flex');
+            uploadModal.classList.add('hidden');
+            imageUpload.value = '';
+            document.getElementById('image-title-input').value = '';
+            document.getElementById('image-description-input').value = '';
+        });
+        
+        // Function to add image to gallery
+        function addImageToGallery(imageObj, index) {
+            // Remove placeholder if it's the first image
+            if (uploadedImages.length === 1) {
+                galleryGrid.innerHTML = '';
+            }
+            
+            // Create gallery item
+            const galleryItem = document.createElement('div');
+            galleryItem.className = 'gallery-item relative group overflow-hidden rounded-lg aspect-square';
+            galleryItem.dataset.index = index;
+            
+            // Set background image
+            galleryItem.style.backgroundImage = `url(${imageObj.src})`;
+            galleryItem.style.backgroundSize = 'cover';
+            galleryItem.style.backgroundPosition = 'center';
+            
+            // Add overlay with details
+            galleryItem.innerHTML = `
+                <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
+                    <div class="p-3 text-white w-full">
+                        <h4 class="font-medium truncate">${imageObj.title}</h4>
+                        <p class="text-xs text-gray-300">${new Date(imageObj.date).toLocaleDateString()}</p>
+                        <div class="flex justify-end mt-2">
+                            <button class="p-1 text-white hover:text-pink-300 favorite-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                            </button>
+                            <button class="p-1 text-white hover:text-pink-300 ml-2 view-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add to gallery
+            galleryGrid.appendChild(galleryItem);
+            
+            // Update memories counter if needed
+            const momentsCount = document.getElementById('moments-count');
+            if (momentsCount) {
+                const currentCount = parseInt(momentsCount.textContent);
+                momentsCount.textContent = currentCount + 1;
+            }
+            
+            // Open image viewer when clicked
+            galleryItem.addEventListener('click', function(e) {
+                if (!e.target.closest('.favorite-btn')) {
+                    openImageViewer(index);
+                }
+            });
+        }
+        
+        // Function to open image viewer
+        function openImageViewer(index) {
+            if (uploadedImages.length === 0) return;
+            
+            currentImageIndex = index;
+            const image = uploadedImages[index];
+            
+            // Set image and details
+            currentImage.src = image.src;
+            imageTitle.textContent = image.title;
+            imageDescription.textContent = image.description;
+            imageDate.textContent = new Date(image.date).toLocaleDateString();
+            
+            // Show modal
+            imageViewerModal.classList.remove('hidden');
+            imageViewerModal.classList.add('flex');
+        }
+        
+        // Close image viewer
+        closeViewer.addEventListener('click', function() {
+            imageViewerModal.classList.remove('flex');
+            imageViewerModal.classList.add('hidden');
+        });
+        
+        // Navigate to previous image
+        prevImage.addEventListener('click', function() {
+            if (uploadedImages.length <= 1) return;
+            
+            currentImageIndex = (currentImageIndex - 1 + uploadedImages.length) % uploadedImages.length;
+            openImageViewer(currentImageIndex);
+        });
+        
+        // Navigate to next image
+        nextImage.addEventListener('click', function() {
+            if (uploadedImages.length <= 1) return;
+            
+            currentImageIndex = (currentImageIndex + 1) % uploadedImages.length;
+            openImageViewer(currentImageIndex);
+        });
+        
+        // Filter gallery by category
+        const filterButtons = document.querySelectorAll('#gallery .rounded-full');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Reset active state
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('bg-pink-500', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-pink-100');
+                });
+                
+                // Set active state
+                this.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-pink-100');
+                this.classList.add('bg-pink-500', 'text-white');
+                
+                // Filter gallery
+                const category = this.textContent.toLowerCase();
+                
+                // Refresh gallery with filtered images
+                if (category === 'all photos') {
+                    refreshGallery(uploadedImages);
+                } else {
+                    const filteredImages = uploadedImages.filter(img => 
+                        img.category.toLowerCase() === category.slice(0, -1) // Remove 's' from end
+                    );
+                    refreshGallery(filteredImages);
+                }
+            });
+        });
+        
+        // Function to refresh gallery with filtered images
+        function refreshGallery(images) {
+            galleryGrid.innerHTML = '';
+            
+            if (images.length === 0) {
+                galleryGrid.innerHTML = `
+                    <div class="col-span-full text-center py-8">
+                        <p class="text-gray-500">No images found in this category</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            images.forEach((image, index) => {
+                addImageToGallery(image, uploadedImages.indexOf(image));
+            });
+        }
+        
+        // Drag and drop functionality
+        const dropZone = document.querySelector('.border-dashed');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropZone.classList.add('bg-pink-50');
+        }
+        
+        function unhighlight() {
+            dropZone.classList.remove('bg-pink-50');
+        }
+        
+        dropZone.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                imageUpload.files = files;
+                const event = new Event('change');
+                imageUpload.dispatchEvent(event);
+            }
+        }
+        
+        // Add to navigation menu
+        const navMenu = document.querySelector('nav .hidden.md\\:flex');
+        if (navMenu) {
+            const galleryLink = document.createElement('a');
+            galleryLink.href = '#gallery';
+            galleryLink.className = 'text-gray-700 hover:text-pink-500 font-medium';
+            galleryLink.textContent = 'Gallery';
+            navMenu.appendChild(galleryLink);
+            
+            // Add smooth scrolling
+            galleryLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                window.scrollTo({
+                    top: target.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+            });
+        }
+    });
+    // Monthsary Celebration Feature
+document.addEventListener('DOMContentLoaded', function() {
+    // Get today's date
+    const today = new Date();
+    
+    // Set the relationship start date (replace with your actual date)
+    const startDate = new Date('2023-01-15'); // Format: YYYY-MM-DD
+    
+    // Calculate the number of months between start date and today
+    const monthsCount = calculateMonthsBetween(startDate, today);
+    
+    // Add monthsary counter to the dashboard
+    addMonthsaryCounter(monthsCount);
+    
+    // Check if today is a monthsary
+    const isMonthsary = checkIfMonthsary(startDate, today);
+    
+    // If it's a monthsary, show celebration banner with sweet message
+    if (isMonthsary) {
+        showMonthsaryCelebration(monthsCount);
+    }
+    
+    // Calculate days until next monthsary
+    const daysUntilNextMonthsary = calculateDaysUntilNextMonthsary(startDate, today);
+    updateNextMonthsaryCounter(daysUntilNextMonthsary);
+});
+
+// Calculate months between two dates
+function calculateMonthsBetween(startDate, currentDate) {
+    const yearDiff = currentDate.getFullYear() - startDate.getFullYear();
+    const monthDiff = currentDate.getMonth() - startDate.getMonth();
+    return yearDiff * 12 + monthDiff;
+}
+
+// Check if today is a monthsary date
+function checkIfMonthsary(startDate, currentDate) {
+    return currentDate.getDate() === startDate.getDate();
+}
+
+// Calculate days until next monthsary
+function calculateDaysUntilNextMonthsary(startDate, currentDate) {
+    let nextMonthsary = new Date(currentDate);
+    
+    // Set the date to the same day as the start date
+    nextMonthsary.setDate(startDate.getDate());
+    
+    // If that day already passed this month, move to next month
+    if (currentDate.getDate() > startDate.getDate()) {
+        nextMonthsary.setMonth(nextMonthsary.getMonth() + 1);
+    }
+    
+    // Calculate the difference in days
+    const diffTime = nextMonthsary - currentDate;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    return diffDays;
+}
+
+// Add monthsary counter to dashboard
+function addMonthsaryCounter(monthsCount) {
+    // Create a new card for monthsary counter
+    const monthsaryCard = document.createElement('div');
+    monthsaryCard.className = 'card bg-white p-6 floating';
+    monthsaryCard.innerHTML = `
+        <div class="flex flex-col items-center">
+            <div class="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-1.5-.454" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2 text-center">Monthsaries</h3>
+            <div class="counter-value text-5xl font-bold text-pink-600" id="months-count">
+                ${monthsCount}
+            </div>
+            <p class="text-gray-500 mt-2 text-center">months of love</p>
+        </div>
+    `;
+    
+    // Insert after the Days Together card
+    const dashboardSection = document.querySelector('#dashboard .grid');
+    if (dashboardSection) {
+        dashboardSection.appendChild(monthsaryCard);
+    }
+}
+
+// Show monthsary celebration with sweet message
+function showMonthsaryCelebration(monthsCount) {
+    // Create celebration banner
+    const celebrationBanner = document.createElement('div');
+    celebrationBanner.className = 'fixed top-20 inset-x-0 z-30 flex justify-center';
+    
+    // Get random sweet message
+    const sweetMessage = getRandomSweetMessage(monthsCount);
+    
+    // Set banner content
+    celebrationBanner.innerHTML = `
+        <div class="gradient-bg p-6 rounded-lg shadow-lg text-center max-w-lg">
+            <h3 class="text-2xl font-bold text-white mb-2 script-font">Happy ${monthsCount}${getOrdinalSuffix(monthsCount)} Monthsary!</h3>
+            <p class="text-white">${sweetMessage}</p>
+            <button class="mt-4 bg-white text-pink-500 px-4 py-2 rounded-full hover:bg-pink-100 text-sm" id="close-monthsary-banner">
+                Thanks! ❤️
+            </button>
+        </div>
+    `;
+    
+    // Add to DOM
+    document.body.appendChild(celebrationBanner);
+    
+    // Add confetti effect
+    addConfettiEffect();
+    
+    // Add event listener to close button
+    document.getElementById('close-monthsary-banner').addEventListener('click', function() {
+        celebrationBanner.remove();
+    });
+}
+
+// Update next monthsary counter
+function updateNextMonthsaryCounter(daysCount) {
+    // Create or update next monthsary section
+    const nextMonthsaryDiv = document.createElement('div');
+    nextMonthsaryDiv.className = 'mt-6 text-center';
+    nextMonthsaryDiv.innerHTML = `
+        <div class="bg-pink-50 rounded-full py-2 px-4 inline-block">
+            <span class="text-pink-600 font-medium">Next Monthsary: </span>
+            <span class="font-bold text-pink-600">${daysCount} days</span>
+        </div>
+    `;
+    
+    // Add to appropriate section (below dashboard)
+    const dashboardSection = document.getElementById('dashboard');
+    if (dashboardSection) {
+        dashboardSection.appendChild(nextMonthsaryDiv);
+    }
+}
+
+// Get ordinal suffix for numbers (1st, 2nd, 3rd, etc.)
+function getOrdinalSuffix(num) {
+    const j = num % 10,
+          k = num % 100;
+    if (j == 1 && k != 11) {
+        return "st";
+    }
+    if (j == 2 && k != 12) {
+        return "nd";
+    }
+    if (j == 3 && k != 13) {
+        return "rd";
+    }
+    return "th";
+}
+
+// Collection of sweet messages for monthsaries
+function getRandomSweetMessage(monthCount) {
+    const messages = [
+        "Every day with you feels like a blessing. Here's to many more months together!",
+        "In a world full of people, my heart chose you and it keeps choosing you every day.",
+        "Another month of loving you, and I fall deeper each day.",
+        "You're the best part of my day, every day for another month. I love you!",
+        `${monthCount} months of beautiful memories, and we're just getting started.`,
+        "Time flies when I'm with you. Happy monthsary, my love!",
+        "Every moment with you is a treasure I keep in my heart.",
+        "You make my life better just by being in it. Happy monthsary!",
+        "Here's to us and our journey of love. Happy monthsary!",
+        "To the one who makes my heart skip a beat, happy monthsary!",
+        "Forever is made up of months like these, and I'm loving every second.",
+        "Your love is the greatest gift I could ever receive.",
+        "Another month of us, and I wouldn't change a thing.",
+        "Life is better with you by my side. Happy monthsary, my love!",
+        "You're my favorite hello and my hardest goodbye. Happy monthsary!"
+    ];
+    
+    // Custom messages based on milestone monthsaries
+    if (monthCount % 12 === 0) {
+        return `Another year of loving you! That's ${monthCount/12} year${monthCount > 12 ? 's' : ''} of beautiful memories we've created together.`;
+    } else if (monthCount === 1) {
+        return "Our first monthsary! Here's to the beginning of our beautiful journey together.";
+    } else if (monthCount === 6) {
+        return "Half a year of loving you, and it just keeps getting better!";
+    } else if (monthCount === 100) {
+        return "A hundred months of love! That's a century of us, and I'm grateful for every moment.";
+    }
+    
+    // Return random message from the collection
+    return messages[Math.floor(Math.random() * messages.length)];
+}
+
+// Add confetti effect for celebration
+function addConfettiEffect() {
+    // Use the particles.js library that's already included in your HTML
+    particlesJS("particles-js", {
+        "particles": {
+            "number": {
+                "value": 100,
+                "density": {
+                    "enable": true,
+                    "value_area": 800
+                }
+            },
+            "color": {
+                "value": ["#ff6b6b", "#4ecdc4", "#ffbe0b", "#f7f7f7"]
+            },
+            "shape": {
+                "type": "circle",
+                "stroke": {
+                    "width": 0,
+                    "color": "#000000"
+                }
+            },
+            "opacity": {
+                "value": 0.7,
+                "random": false,
+                "anim": {
+                    "enable": false
+                }
+            },
+            "size": {
+                "value": 6,
+                "random": true,
+                "anim": {
+                    "enable": false
+                }
+            },
+            "line_linked": {
+                "enable": false
+            },
+            "move": {
+                "enable": true,
+                "speed": 6,
+                "direction": "bottom",
+                "random": true,
+                "straight": false,
+                "out_mode": "out",
+                "bounce": false,
+                "attract": {
+                    "enable": false
+                }
+            }
+        },
+        "interactivity": {
+            "detect_on": "canvas",
+            "events": {
+                "onhover": {
+                    "enable": true,
+                    "mode": "repulse"
+                },
+                "onclick": {
+                    "enable": true,
+                    "mode": "push"
+                },
+                "resize": true
+            }
+        },
+        "retina_detect": true
+    });
+    
+    // Reset particles after 10 seconds
+    setTimeout(function() {
+        // Reset particles to the original settings or clear them
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 50,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#ff6b6b"
+                },
+                "opacity": {
+                    "value": 0.3,
+                    "random": true
+                },
+                "size": {
+                    "value": 3,
+                    "random": true
+                },
+                "line_linked": {
+                    "enable": false
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "bubble"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "resize": true
+                }
+            },
+            "retina_detect": true
+        });
+    }, 10000);
+}
+</script> 
+ </body>
+</html>
